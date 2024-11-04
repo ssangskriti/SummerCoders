@@ -1,0 +1,171 @@
+<html>
+<head>
+    <style>
+        body {
+            font-size: 12px;
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            page-break-inside: avoid;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            height: 40px;
+            width: 100px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        td.date {
+            width: 150px;
+            white-space: nowrap;
+        }
+        .section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        .section h2 {
+            page-break-after: avoid;
+        }
+        .section-content {
+            page-break-inside: avoid;
+        }
+        thead {
+            display: table-header-group;
+        }
+        tfoot {
+            display: table-footer-group;
+        }
+        @page {
+            margin: 20mm;
+            @top-center {
+                content: element(header);
+            }
+            @bottom-center {
+                content: element(footer);
+            }
+        }
+        .header {
+            position: running(header);
+        }
+        .footer {
+            position: running(footer);
+        }
+        .page-break {
+            page-break-before: always;
+        } 
+    </style>
+</head>
+<body>
+ <div class='section'>
+    <h2 style='text-align: center;'>Pay Code Counts</h2>
+    <div class="section-content">
+        <table>
+            <tbody>
+                {{ pay_code_counts }}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Student data for more than 10 hours of working hours per week for the last 10 weeks </h2>
+    <div class="section-content">
+        <div style="margin-bottom: 40px;">
+            <img src="data:image/png;base64,{{ base64_string_excessive_hours }}" alt="Graph" style="display: block; margin-left: auto; margin-right: auto; width: 80%;">
+        </div>
+    </div>
+</div>
+<h3>** The legends present - student name (account, purpose code). The graph consists of the list of
+    students who worked more than 10 hours at least once in the last 10 weeks. The star point indicates more than 10 hours 
+    of working hours in that week for that person.  The dates in the x axis are the first days of each week. </h3>
+
+<div class="section">
+    <h2>Student data for more than 5 hours of working hours per day for the last 2 weeks </h2>
+    <div class="section-content">
+        <div style="margin-bottom: 40px;">
+            <img src="data:image/png;base64,{{ base64_string_long_sessions }}" alt="Graph" style="display: block; margin-left: auto; margin-right: auto; width: 80%;">
+        </div>
+    </div>
+</div>
+<h3>** This graph represents the list of students who exceeded 5 hours in any day in the last two weeks indicated by star-shaped points. The dot points represent time for other days.  </h3>
+<br>
+
+{% if current_week_rows > 0 %}
+<div class='section'>
+    <h2 style='text-align: center;'>Working hours (>10) of students for the last week ({{ start_date_last_week }} to {{ end_date_last_week }})</h2>
+    <h3 style='text-align: center;'>Number of entries: {{ current_week_rows }}, Total hours: {{ current_week_total_hours }}</h3>
+    <div class="section-content">
+        <table>
+            <tbody>
+                {{ table_current_week }}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<br><h3 style='text-align: center; border:black; border-width:1px; border-style:solid;'>** No data available for working hours (>10) of students for the last week.</h3>
+{% endif %}
+
+{% if missing_time_rows > 0 %}
+<div class='section'>
+    <h2 style='text-align: center;'>List of students missing clock time for the last week ({{ missing_start_date }} to {{ missing_end_date }})</h2>
+    <h3 style='text-align: center;'>Number of entries: {{ missing_time_rows }}</h3>
+    <div class="section-content">
+        <table>
+            <tbody>
+                {{ missing_time_table }}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<br><h3 style='text-align: center; border:black; border-width:1px; border-style:solid;'>** No missed clock time was found for the last week. </h3>
+{% endif %}
+
+{% if holiday_rows > 0 %}
+<div class='section'>
+    <h2 style='text-align: center;'>List of students working on holidays for the last ten weeks ({{ holidays_start_date }} to {{ holidays_end_date }})</h2>
+    <h3 style='text-align: center;'>Number of entries: {{ holiday_rows }}, Total hours: {{ holiday_total_hours }}</h3>
+    <div class="section-content">
+        <table>
+            <tbody>
+                {{ holiday_table }}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<br><h3 style='text-align: center; border:black; border-width:1px; border-style:solid;'>** No work hours on holidays were found for the last 10 weeks.</h3>
+{% endif %}
+
+{% if student_ot_rows > 0 %}
+<div class='section'>
+    <h2 style='text-align: center;'>List of students working overtime for the last week ({{ start_date_last_week }} to {{ end_date_last_week }})</h2>
+    <p style='text-align: center;'>Number of entries: {{ student_ot_rows }}, Total hours: {{ student_ot_total_hours }}</p>
+    <div class="section-content">
+        <table>
+            <tbody>
+                {{ student_ot_table }}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<br><h3 style='text-align: center; border:black; border-width:1px; border-style:solid;'>** No overtime data was found for the last week.</h3>
+{% endif %}
+
+<br><br><br><div style='text-align: left; margin-top: 20px;'><h3>This report was generated based on the data collected on {{ report_date }}.</h3></div>
+<div class='section'> 
+    <h3 style='text-align: left;'>Report generated at {{ report_generation_time }} on {{ report_generation_date }}.</h3>
+    <h3 style='text-align: left;'>Data file used: {{ file_name }}.</h3>
+    <h3 style='text-align: left;'>Total entries processed: {{ total_rows_processed }}.</h3>
+</div>
+</body>
+</html>

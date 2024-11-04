@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Faculty Data</title>
+    <style>
+        body {
+            font-size: 14px;
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            page-break-inside: avoid;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            height: 40px;
+            width: 100px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        td.date {
+            width: 150px;
+            white-space: nowrap;
+        }
+        .section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        .section h2 {
+            page-break-after: avoid;
+        }
+        .section-content {
+            page-break-inside: avoid;
+        }
+        thead {
+            display: table-header-group;
+        }
+        tfoot {
+            display: table-footer-group;
+        }
+        @page {
+            margin: 20mm;
+            @top-center {
+                content: element(header);
+            }
+            @bottom-center {
+                content: element(footer);
+            }
+        }
+        .header {
+            position: running(header);
+        }
+        .footer {
+            position: running(footer);
+        }
+        .page-break {
+            page-break-before: always;
+        } 
+          
+    </style>
+</head>
+<body>
+    <h1><u>Faculty Data for {{ faculty_name }}</u></h1>
+
+    <h1> Report for the last week </h1>
+    <!-- <p>Total Working Hours: {{ total_hours_week }}</p> -->
+
+    <!-- <h3>Weekly Data Graph</h3> -->
+    <div class="graph-container">
+        <img src="data:image/png;base64,{{ weekly_graph }}" alt="Weekly Data Graph">
+    </div>
+    <br>
+ 
+    <!-- Weekly Line Plot -->
+    <div class="graph-container"> 
+        <img src="data:image/png;base64,{{ weekly_line_plot }}" alt="Weekly Line Plot">
+    </div>
+    
+     
+     
+   
+    
+<br>
+    <div class='section'>
+<br>
+    <h2>Total Hours Spent for Each Purpose Code ({{ start_of_week }} to {{ end_of_week }})<br><br> Number of Purpose Codes: {{ num_purpose_codes_week }}, Total Hours: {{ total_hours_for_week }}<br></h2>
+<br>
+    {% if total_hours_per_purpose %}
+    <table>
+        <thead>
+            <tr>
+                <th>Purpose Code</th>
+                <th>Total Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in total_hours_per_purpose %}
+            <tr>
+                <td>{{ item['Purpose Code'] }}</td>
+                <td>{{ item['Total Hours'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No work hours for the last week.</p>
+    {% endif %}
+</div>
+<br>
+<div class='section'>
+    <h2>Total Hours Spent per Day by Each Student ({{ start_of_week }} to {{ end_of_week }}) <br> Number of Entries: {{ num_entries_week_table }}<br></h2>
+    {% if details_week %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Account</th>
+                <th>Date</th>
+                <th>Purpose Code</th>
+                <th>Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detail in details_week %}
+            <tr>
+                <td>{{ detail.Name }}</td>
+                <td>{{ detail.Account }}</td>
+                <td>{{ detail.Date }}</td>
+                <td>{{ detail['Purpose Code'] }}</td>
+                <td>{{ detail.Hours }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No work hours recorded for the last week.</p>
+    {% endif %}
+</div>
+    <div style="page-break-inside:avoid;page-break-after:always"></div>
+<!-- 
+    
+------------------------------------------------------------------------------
+
+-->
+    <h1 style="page-break-before: always">Report for the last 10 weeks </h1>
+
+   {% if print_ten_weeks_graph %}
+    <div class="graph-container">
+        <img src="data:image/png;base64,{{ ten_weeks_graph }}" alt="Ten Weeks' Data Graph">
+    </div>
+    {% endif %}
+    <br> 
+
+    <div class="graph-container"> 
+        <img src="data:image/png;base64,{{ ten_weeks_line_plot }}" alt="10-Weeks Line Plot">
+    </div>
+     
+    
+    <br>
+    <div class='section'>
+    {% if top_10_students %}
+    <h2>List of 10 Students with Highest Working Hours ({{ start_of_10weeks }} to {{ end_of_10weeks }})</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Person</th> <th>Account</th>
+                {% for purpose_code in purpose_codes %}
+                <th>{{ purpose_code }}</th>
+                {% endfor %}
+                <th>Total Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for person, account, total in top_10_students %}
+            <tr>
+                              
+                <td>{{ person }} </td> <td>{{ account }}</td>
+                {% for purpose_code in purpose_codes %}
+                <td>{{ table_data[(person, account)][purpose_code]|round(2) }}</td>
+                {% endfor %}
+                <td>{{ total|round(2) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+<div class="section">
+
+    {% if bottom_10_students %}
+    <h2>List of  10 Students with Lowest Working Hours ({{ start_of_10weeks }} to {{ end_of_10weeks }}) <br></h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Person</th> <th>Account</th>
+                {% for purpose_code in purpose_codes %}
+                <th>{{ purpose_code }}</th>
+                {% endfor %}
+                <th>Total Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for person, account, total in bottom_10_students %}
+            <tr>
+                <td>{{ person }} </td> <td> {{ account }} </td>
+                {% for purpose_code in purpose_codes %}
+                <td>{{ table_data[(person, account)][purpose_code]|round(2) }}<br></td>
+                {% endfor %}
+                <td>{{ total|round(2) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+<div class="section">
+    <!--  table for the last 10 weeks -->
+    <h2>Total Hours Spent for Each Purpose Code ({{ start_of_10weeks }} to {{ end_of_10weeks }})<br><br> Number of Purpose Codes: {{ num_purpose_codes_10weeks }}, Total Hours: {{ total_hours_for_10weeks }}<br></h2>
+    <br>
+    {% if total_hours_per_purpose_10weeks %}
+    <table>
+        <thead>
+            <tr>
+                <th>Purpose Code</th>
+                <th>Total Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in total_hours_per_purpose_10weeks %}
+            <tr>
+                <td>{{ item['Purpose Code'] }}</td>
+                <td>{{ item['Total Hours'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No work hours for the last 10 weeks.</p>
+    {% endif %}
+</div>
+
+<div class='section'> 
+    <h3 style='text-align: left;'>Report generated at {{ report_generation_time }} on {{ report_generation_date }}.</h3>
+    <h3 style='text-align: left;'>Data files used: {{ file_name }}.</h3>
+    <h3 style='text-align: left;'>Total entries processed: {{ total_rows_processed }}.</h3>
+</div>
+</body>
+</html>

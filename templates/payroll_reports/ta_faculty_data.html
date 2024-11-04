@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TA Faculty Data</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .graph-container {
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>TA Faculty Data for {{ faculty_name }}</h1>
+    <h2> Weekly Data (Report Period: {{ start_of_week }} to {{ end_of_week }})</h2>
+    <p>Total Hours: {{ total_hours_week }}</p>
+
+    {% if weekly_graph %}
+    <h3>Weekly Data Graph</h3>
+    <div class="graph-container">
+        <img src="data:image/png;base64,{{ weekly_graph }}" alt="Weekly Data Graph">
+    </div>
+    {% else %}
+    <p>No data available for the last week.</p>
+    {% endif %}
+
+    <h3>Hours per Day for Each Student (Last Week)</h3>
+    {% if details_week %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Account</th>
+                <th>Date</th>
+                <th>Position</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detail in details_week %}
+            <tr>
+                <td>{{ detail.Name }}</td>
+                <td>{{ detail.Account }}</td>
+                <td>{{ detail.Date }}</td>
+                <td>{{ detail['Position'] }}</td>
+                <td>{{ detail['Start Time'] }}</td>
+                <td>{{ detail['End Time'] }}</td>
+                <td>{{ detail.Hours }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No work hours recorded for the last week.</p>
+    {% endif %}
+
+    <h2> Last 10 Weeks Data (Report Period: {{ start_of_10_weeks }} to {{ end_of_10_weeks }})</h2>
+    <p>Total Hours: {{ total_hours_10_weeks }}</p>
+
+
+
+    <h3>Total Hours per Student (Last 10 Weeks)</h3>
+    {% if details_10_weeks %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Account</th>
+                <th>Position</th>
+                <th>Total Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detail in details_10_weeks %}
+            <tr>
+                <td>{{ detail.Name }}</td>
+                <td>{{ detail.Account }}</td>
+                <td>{{ detail['Position'] }}</td>
+                <td>{{ detail['Total Hours'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No work hours recorded for the last 10 weeks.</p>
+    {% endif %}
+
+</body>
+</html>

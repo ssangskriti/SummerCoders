@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enter Faculty Information</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        form {
+            display: inline-block;
+            margin-top: 50px;
+        }
+        label, input, textarea, button {
+            display: block;
+            margin: 10px 0;
+            width: 100%;
+        }
+        input, textarea {
+            padding: 8px;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Enter Faculty Information</h1>
+    <form action="/faculty" method="post">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="purpose_codes">Purpose Codes (comma-separated):</label>
+        <textarea id="purpose_codes" name="purpose_codes" rows="3" placeholder="Enter purpose codes separated by commas"></textarea>
+
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
